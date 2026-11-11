@@ -612,6 +612,15 @@ if ($embeddingKey -and $embeddingUrl -and $embeddingModel) {
         -Keys @('memory.search.enabled','agents.defaults.memorySearch.enabled')
     if (($embeddingKeyNames + $embeddingUrlNames + $embeddingModelNames | Where-Object { $envValues.ContainsKey($_) }).Count -gt 0) { Write-Warning '向量 API 配置不完整，已关闭向量检索；需要同时设置向量 API key、Base URL 和模型名' } else { Info '未配置独立向量 API，使用关键词记忆检索' }
 }
+if ($env:EASEL_BROWSER_PROVIDER -eq 'egolite') {
+    $deniedTools = @('browser')
+    if (Test-Path $openclawJson) {
+        $currentConfig = Get-Content $openclawJson -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($currentConfig.tools.deny) { $deniedTools += @($currentConfig.tools.deny) }
+    }
+    $deniedTools = @($deniedTools | Select-Object -Unique)
+    Set-OpenClawConfig 'tools.deny' (ConvertTo-Json -InputObject $deniedTools -Compress) -Json
+}
 Set-OpenClawConfig 'agents.defaults.timeoutSeconds' '7200'; Set-OpenClawConfig 'gateway.mode' 'local'; Set-OpenClawConfig 'gateway.bind' 'loopback'; Set-OpenClawConfig 'gateway.auth.mode' 'none'
 # 对话直连常驻网关（web/app.py 的 http 传输层）要用 OpenAI 兼容端点，而 openclaw 默认不挂这条
 # 路由（chatCompletions.enabled 默认 false），不开则 POST /v1/chat/completions 一律 404、只能

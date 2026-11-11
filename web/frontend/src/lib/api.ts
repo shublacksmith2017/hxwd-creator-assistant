@@ -27,7 +27,13 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     let detail = '';
     try {
       const j = await res.json();
-      detail = (j && (j.detail || j.message)) || '';
+      const payload = j && (j.detail || j.message);
+      if (payload && typeof payload === 'object' && payload.code === 'ego_required' && typeof payload.prompt === 'string') {
+        window.dispatchEvent(new CustomEvent('hxwd-ego-task', { detail: payload.prompt }));
+        detail = payload.message;
+      } else {
+        detail = typeof payload === 'string' ? payload : '';
+      }
     } catch {
       /* 响应体不是 JSON，忽略 */
     }
@@ -488,6 +494,7 @@ export function deleteSession(sessionKey: string): Promise<{ deleted: boolean }>
 
 // ---- 账号登录 ----
 export interface AccountItem {
+  browserProvider?: string;
   platform: string;
   name: string;
   backend: string;      // xhs | web | biliup | unsupported

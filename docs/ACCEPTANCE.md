@@ -1,18 +1,21 @@
-# 验收记录
+# 华新创作助手 v0.3.0.01 验收记录
 
-- 2026-11-12：上游 1195 个入包文件下载时逐项通过 Git blob SHA-1 校验；上游源码 commit 52806b36f5785e8f585c86ff8cf3021ac8dad34b。
-- Apilio 独立有限额模型令牌：claude-haiku-5-5 工具调用测试通过，返回 report_ready({"status":"OK"})。未复用 CRM 密钥，密钥未入库。
-- Windows 自动化与前端构建结果：以仓库 Actions 最近执行结果及后续本记录为准。
-- 尚需真实员工 Windows 电脑完成首次安装、本人扫码和业务操作验收。未执行对外发布、评论或私信。
-- 图文范围：gpt-image-2-all 已由原版 ai_image.py 发起真实请求，成功保存并人工查看 PNG。配音、语音转写、视频、音乐按用户要求不配置。
+## 本版已验证
 
-- 前端 npm audit fix 后 0 漏洞，生产构建通过；46 项相关 Python 回归测试通过。
-- EgoLite 实际检查：6 个主入口可访问，技能库显示 118 项、账号页显示 10 个平台，品牌和版本显示正确。这里只证明入口及代码保留，未逐项跑完 118 个技能。
-- GitHub Windows PowerShell 5.1 语法、缺失激活文件拒绝、配置回归及 Linux 前端构建已通过。完整 Windows 安装测试另行记录。
+- 上游源码固定 52806b36f5785e8f585c86ff8cf3021ac8dad34b；1195 个入包文件下载时逐项通过 Git blob SHA-1 校验。保留许可证、NOTICE、原版文档和运行所需技能资产。
+- Windows 完整核心安装通过：实际安装依赖、启动独立 OpenClaw 网关、真实调用 Apilio，`easel ping` 网关和 Agent PONG 均通过。[Windows 安装记录](https://github.com/shublacksmith2017/hxwd-creator-assistant/actions/runs/43081665494)（安装修复提交 56c170f）。
+- Windows 实际下载官方 EgoLite 安装包，Authenticode 为 Valid。[签名检查](https://github.com/shublacksmith2017/hxwd-creator-assistant/actions/runs/43079080425)。此项不代表已完成 Windows 图形安装向导及本人首次引导。
+- 内置官方 EgoLite Skill v2.2.0 的24个文件及 MIT 许可；下载 SHA-256 与官方摘要一致，复制到隔离 Agent 工作区后逐文件校验一致。
+- 本机 Haiku 实际调用文件工具写入并读回 agent-proof.txt，结果 HXWD_AGENT_FILE_OK。此项本机 OpenClaw 为现有2026.8.1，Windows安装固定2026.11.3。
+- 图片由原版 ai_image.py 调用 gpt-image-2-all 真实生成，保存并查看 PNG，1254×1254，959986字节；SHA-256 ff6838520321dfcb8464088490bb130bada0a1a384dc41602a034658fd9991ed。
+- EgoLite 页面检查：6个主入口可访问，技能库118项，账号页10个平台；产品名称、版本、网关已连接状态正确。账号页显示 EgoLite 操作及结果保存位置。
+- 15项 Ego 路由回归覆盖10个平台登录转交、手动检查、后台请求不误启动浏览器、发布内容保留并要求确认、退出不误删全局浏览器数据。前端 TypeScript 与 Vite 构建通过。
+- Windows PowerShell 5.1语法、进程退出码、Ego安装分支、缺失激活文件拒绝及配置检查在 Actions 中运行。最终打包提交对应结果见仓库 Actions。
 
-- EgoLite 集成：官方 Windows 下载入口已确认；Windows 安装向导新增复用、签名校验、本人初始化、CLI 检查，启动器改用 EgoLite。缺失初始化不算通过，平台脚本适配仍待完成。
-- Windows 第二轮完整安装：依赖和实际模型调用通过；Agent 原生入口解析失败（npm 全局目录与 Node 不同目录），已增加修复及回归，待 Windows 重跑。
+## 交付边界
 
-- EgoLite 官方仓库已接入：内置 v2.2.0 的 24 个 Skill 文件及 MIT 许可证，Release 包 SHA-256 与官方摘要一致；实际复制到隔离 Agent workspace 后逐文件校验通过。
-- Windows 官方安装包在 GitHub Windows runner 上实际下载，Authenticode 状态为 Valid：[运行记录](https://github.com/shublacksmith2017/hxwd-creator-assistant/actions/runs/43079080425)。此检查未执行安装器或本人引导。
-- Ego 安装分支及前端检查通过：[运行记录](https://github.com/shublacksmith2017/hxwd-creator-assistant/actions/runs/43078763771)。本地相关回归 37 passed、2 skipped。
+- 这是 Windows 10/11 x64 联网安装包，需 GitHub/npm/PyPI/官方 EgoLite 下载可达；不是完全离线 EXE。真实员工电脑首次 EgoLite 引导、UAC和平台扫码由本人完成。
+- 账号登录、账号检查和图文发布交给 EgoLite AI 对话。原版 Playwright 脚本保留供兼容参考，不会自动降级调用；后台自动拉取账号增长图表未接通 EgoLite，结果先在对话呈现。
+- 未逐项实号验证全部118项技能及10个平台；未对外发布、点赞、评论、发送私信。各平台权限及页面变化需在使用时确认。
+- 本版仅配置图文模型；语音、配音、视频生成、音乐不配置。
+- 公共 GitHub 包没有密钥。私有内部包单独携带有限额、限模型、有效期受控的 activation.json，禁止公开上传。

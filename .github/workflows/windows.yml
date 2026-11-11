@@ -25,6 +25,10 @@ jobs:
       - name: Ego bootstrap regression
         shell: powershell
         run: ./distribution/test_ego.ps1
+      - name: Install routing test dependencies
+        run: python -m pip install -e . pytest
+      - name: Ego action routing tests
+        run: python -m pytest tests/test_hxwd_ego_routing.py tests/test_openclaw_cmd_shim.py -q
       - name: Configuration tests
         run: python -m unittest discover -s distribution -p test_*.py -v
       - name: Missing activation must fail safely

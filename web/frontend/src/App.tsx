@@ -583,6 +583,20 @@ export default function App() {
     sendUserAndStream(ns.id, prompt);
   }, [selectedPersona, sendUserAndStream]);
 
+  useEffect(() => {
+    const startEgoTask = (event: Event) => {
+      const prompt = (event as CustomEvent<unknown>).detail;
+      if (typeof prompt !== 'string' || !prompt.trim()) return;
+      const ns = createSession(selectedPersona || undefined);
+      setSessions(prev => { const next = [ns, ...prev]; saveSessions(next); return next; });
+      setActiveSessionId(ns.id);
+      setCurrentPage('chat');
+      sendUserAndStream(ns.id, prompt);
+    };
+    window.addEventListener('hxwd-ego-task', startEgoTask);
+    return () => window.removeEventListener('hxwd-ego-task', startEgoTask);
+  }, [selectedPersona, sendUserAndStream]);
+
   const handleStopStream = useCallback((sessionId: string) => {
     const pending = finalizers.current.get(sessionId);
     if (pending) { pending.finish(); return; }

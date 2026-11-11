@@ -415,7 +415,7 @@ export default function AccountsPage() {
             <div key={a.platform} className="card account-card" style={{ opacity: a.supported ? 1 : 0.6 }}>
               <div className="account-card-head">
                 <span className="account-card-name">{a.name}</span>
-                {badge(a)}
+                {a.browserProvider === 'egolite' ? <span className="badge">EgoLite</span> : badge(a)}
               </div>
 
               {logged && info && (
@@ -429,7 +429,12 @@ export default function AccountsPage() {
               )}
 
               <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                {logged ? (
+                {a.browserProvider === 'egolite' ? (
+                  <>
+                    <button className="btn btn-sm btn-primary" onClick={() => (a.backend === 'wechat-oa' ? handleMpLogin(a) : handleLogin(a))}>登录平台</button>
+                    <button className="btn btn-sm" onClick={() => runWhoami(a.platform)}>检查账号与数据</button>
+                  </>
+                ) : logged ? (
                   <>
                     <button className="btn btn-sm" style={{ flex: 1 }}
                       disabled={busy === a.platform || busy === a.platform + ':mp' || w === 'loading'}

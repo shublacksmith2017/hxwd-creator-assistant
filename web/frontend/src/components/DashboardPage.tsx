@@ -142,7 +142,7 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
     { label: '待做选题', value: String(pendingIdeas.length), page: 'ideas', Icon: IconIdea },
     { label: '待发排期', value: String(upcoming.length), page: 'calendar', Icon: IconCalendar },
     { label: '内容项目', value: String(outputs.length), page: 'outputs', Icon: IconOutputs },
-    { label: '已登录账号', value: `${loggedIn}/${accounts.length}`, page: 'accounts', Icon: IconAccounts },
+    { label: accounts.some(a => a.browserProvider === 'egolite') ? '账号管理' : '已登录账号', value: accounts.some(a => a.browserProvider === 'egolite') ? 'EgoLite' : `${loggedIn}/${accounts.length}`, page: 'accounts', Icon: IconAccounts },
   ];
 
   return (
@@ -255,7 +255,7 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
             if (logged.length === 0) {
               return (
                 <div className="dash-empty" onClick={() => onNavigate('accounts')} style={{ cursor: 'pointer' }}>
-                  去账号页登录后，这里看各平台粉丝 / 获赞 / 关注、增长趋势与最新笔记 →
+                  {accounts.some(a => a.browserProvider === 'egolite') ? '去账号页检查账号与数据，EgoLite 读取的真实结果保存在对话中 →' : '去账号页登录后，这里看各平台粉丝 / 获赞 / 关注、增长趋势与最新笔记 →'}
                 </div>
               );
             }
