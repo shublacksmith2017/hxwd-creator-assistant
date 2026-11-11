@@ -1,0 +1,18 @@
+{
+  "text": {
+    "model": "claude-haiku-5-5",
+    "saved": true
+  },
+  "image": {
+    "model": "gpt-image-2-all",
+    "format": "PNG",
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 959986,
+    "sha256": "ff6838520321dfcb8464088490bb130bada0a1a384dc41602a034658fd9991ed"
+  },
+  "scope": "text-and-image-only",
+  "externalPublishPerformed": false
+}
