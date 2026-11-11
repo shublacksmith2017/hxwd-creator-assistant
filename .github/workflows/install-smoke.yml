@@ -3,7 +3,7 @@ on: workflow_dispatch
 jobs:
   install:
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,6 +27,12 @@ jobs:
           Remove-Item Env:HXWD_ACTIVATION
           & powershell -NoProfile -ExecutionPolicy Bypass -File distribution/Install.ps1 -ActivationPath "$env:RUNNER_TEMP/activation.json" -NoLaunch
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Gateway health summary
+        if: always()
+        shell: powershell
+        run: |
+          Get-Process node -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,CPU
+          Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 37289 } | Select-Object LocalAddress,LocalPort
       - name: Remove temporary activation
         if: always()
         shell: powershell

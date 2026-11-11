@@ -94,11 +94,18 @@ switch ($args[0]) {
         if (Test-Gateway) { Write-Host '[easel] Gateway already running'; break }
         New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
         Write-Host "[easel] Starting Easel gateway (profile: $ProfileName, port: $Port)..."
-        $command = "openclaw --profile $ProfileName gateway run --force --allow-unconfigured --bind loopback"
-        Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-Command', $command `
+        # Launch Node directly: no intermediate PowerShell retaining installer pipes.
+        $env:PYTHONPATH = $Root
+        $resolved = & $pyExe -c 'import json; from easel.openclaw_cmd import openclaw_base_cmd; print(json.dumps(openclaw_base_cmd()))'
+        $env:PYTHONPATH = $prevPyPath
+        $cli = @($resolved | ConvertFrom-Json)
+        if ($cli.Count -lt 2) { throw 'Cannot resolve native OpenClaw Node entrypoint' }
+        $cliArgs = @($cli[1..($cli.Count-1)]) + @('--profile',$ProfileName,'gateway','run','--allow-unconfigured','--bind','loopback')
+        $quotedArgs = @($cliArgs | ForEach-Object { '"' + $_.Replace('"','\"') + '"' })
+        Start-Process $cli[0] -ArgumentList $quotedArgs `
             -WorkingDirectory $Root -RedirectStandardOutput $LogFile -RedirectStandardError $ErrorLogFile -WindowStyle Hidden | Out-Null
         $ready = $false
-        1..20 | ForEach-Object {
+        1..60 | ForEach-Object {
             if (-not $ready) {
                 if (Test-Gateway) { $ready = $true }
                 else { Start-Sleep -Seconds 1 }

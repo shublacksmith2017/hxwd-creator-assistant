@@ -37,6 +37,7 @@ function Invoke-WithProgress([string]$Label, [string]$Exe, [string[]]$Arguments,
                     RedirectStandardError = "$log.err" }
     if ($WorkDir) { $startArgs['WorkingDirectory'] = $WorkDir }
     $proc = Start-Process @startArgs
+    $null = $proc.Handle
     $quiet = [Console]::IsOutputRedirected
     if ($quiet) { Write-Host "  [....] $Label 开始（非交互终端，不显示进度）" }
     $frames = @('[>   ]', '[=>  ]', '[==> ]', '[===>]')
@@ -51,6 +52,8 @@ function Invoke-WithProgress([string]$Label, [string]$Exe, [string[]]$Arguments,
         Start-Sleep -Seconds 1
     }
     if (-not $quiet) { Write-Host "`r$(' ' * 60)`r" -NoNewline }
+    $proc.WaitForExit()
+    $proc.Refresh()
     if ($proc.ExitCode -eq 0) {
         Ok "$Label 完成"
         Remove-Item $log, "$log.err" -Force -ErrorAction SilentlyContinue
@@ -631,9 +634,9 @@ if (Test-OpenClawSupport @('config') 'validate') {
     Add-Warning 'OpenClaw 配置校验' '当前 OpenClaw 不支持 config validate，已跳过整体校验'
 }
 Step '8/8' '启动并验证' '配置校验 · Gateway health'
-$gw = Invoke-NativeCapture 'powershell' @('-NoProfile','-ExecutionPolicy','Bypass','-File',
-    (Join-Path $Root 'scripts\gateway.ps1'), 'start')
-($gw.Output -split "`n") | Where-Object { $_ } | ForEach-Object { Write-Host $_ }
+$gw = [pscustomobject]@{ Ok = $false }
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts\gateway.ps1') start
+$gw.Ok = ($LASTEXITCODE -eq 0)
 # 降级而非中断：gateway 随时可以重启，没理由让一次十几分钟的安装在最后一步作废。
 if (-not $gw.Ok) {
     Add-Warning 'Gateway' '启动失败' 'powershell -File scripts\gateway.ps1 start' 'high'

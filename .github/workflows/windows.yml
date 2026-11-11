@@ -19,6 +19,9 @@ jobs:
             [System.Management.Automation.Language.Parser]::ParseFile($_.FullName,[ref]$t,[ref]$e) | Out-Null
             if ($e) { $e | ForEach-Object { Write-Error $_ }; exit 1 }
           }
+      - name: Native exit code regression
+        shell: powershell
+        run: ./distribution/test_progress.ps1
       - name: Configuration tests
         run: python -m unittest discover -s distribution -p test_*.py -v
       - name: Missing activation must fail safely
