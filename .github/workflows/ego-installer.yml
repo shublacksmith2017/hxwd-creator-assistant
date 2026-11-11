@@ -1,0 +1,22 @@
+name: Official EgoLite installer verification
+on: workflow_dispatch
+jobs:
+  signature:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official Windows installer and verify signature
+        shell: powershell
+        run: |
+          $config = Get-Content distribution/ego-runtime.json -Raw | ConvertFrom-Json
+          $path = Join-Path $env:RUNNER_TEMP 'egoliteSetup.exe'
+          try {
+            Invoke-WebRequest $config.windowsX64Installer -OutFile $path -UseBasicParsing
+            $signature = Get-AuthenticodeSignature $path
+            $signature | Select-Object Status,StatusMessage
+            $signature.SignerCertificate | Select-Object Subject,Issuer,NotAfter
+            Get-FileHash $path -Algorithm SHA256
+            if ($signature.Status -ne 'Valid') { throw 'Official installer signature is not valid; cannot ship automatic execution.' }
+            Write-Host 'Signature verified. Installer not executed; GUI onboarding not tested.'
+          } finally { Remove-Item $path -Force -ErrorAction SilentlyContinue }
