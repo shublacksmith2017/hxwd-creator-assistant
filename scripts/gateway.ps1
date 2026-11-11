@@ -98,7 +98,7 @@ switch ($args[0]) {
         $env:PYTHONPATH = $Root
         $resolved = & $pyExe -c 'import json; from easel.openclaw_cmd import openclaw_base_cmd; print(json.dumps(openclaw_base_cmd()))'
         $env:PYTHONPATH = $prevPyPath
-        $cli = @($resolved | ConvertFrom-Json)
+        $cli = ConvertFrom-Json -InputObject ($resolved -join "`n")
         if ($cli.Count -lt 2) { throw 'Cannot resolve native OpenClaw Node entrypoint' }
         $cliArgs = @($cli[1..($cli.Count-1)]) + @('--profile',$ProfileName,'gateway','run','--allow-unconfigured','--bind','loopback')
         $quotedArgs = @($cliArgs | ForEach-Object { '"' + $_.Replace('"','\"') + '"' })
