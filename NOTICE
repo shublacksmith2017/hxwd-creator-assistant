@@ -1,0 +1,3 @@
+华新创作助手 is a modified distribution of Easel (ZJU-REAL/Easel), licensed under Apache-2.0.
+Upstream copyright and license retained in LICENSE and README.upstream.md.
+Modifications 2026: Huaxin branding, Windows distribution, Apilio preset, loopback-only listener.

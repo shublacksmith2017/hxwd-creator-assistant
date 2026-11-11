@@ -1,0 +1,19 @@
+# 可直接复制给同事的 AI
+
+请在我的 Windows 10/11 x64 电脑上安装「华新创作助手」。这是用户授权的本机安装，请直接完成合理步骤，不要只给命令让我自己执行。
+
+仓库：https://github.com/shublacksmith2017/hxwd-creator-assistant
+安装包：https://github.com/shublacksmith2017/hxwd-creator-assistant/releases/latest
+
+执行要求：
+1. 确认 Windows 版本、x64 架构、可用磁盘空间和联网条件。不要修改已有 CRM、其他 Agent 或浏览器配置。仓库若提示无权访问，请让管理员授予访问，不尝试绕过。
+2. 下载最新华新 Windows Release ZIP 和 SHA256SUMS.txt，校验 SHA-256 后解压到用户本地目录。不要运行源码中上游的 setup.ps1 代替华新安装入口。
+3. 查找管理员提供的 activation.json，放到安装.cmd 同目录。不要显示、复述或上传文件内容。如果没有这个文件，只询问管理员领取位置，不索要总 API Key、不自造凭据。内部包已有该文件时直接继续。
+4. 执行安装.cmd（AI 可运行 distribution/Install.ps1 -NoLaunch）。自动配置的是 Apilio https://api.apilio.ai/v1 和 claude-haiku-5-5，不改成其他模型，不导入管理员后台 Access Token。
+5. 如需系统 UAC 或账号扫码，请把当前窗口交给本人操作；完成后继续。网络失败先检查原因并重试，不能把依赖未装好当成安装成功。不能忽略已有 .openclaw-easel 冲突，须保护原配置。
+6. 运行诊断.cmd。确认浏览器可启动、模型实际返回、Agent 连通。启动后访问 http://127.0.0.1:17860；确认标题为华新创作助手，刷新后仍可打开，已选择 Haiku 5.5。
+7. 用“写一条内部测试文案，不发布”测试对话；再测试生成一个本机测试文本文件，确认 Agent 真实执行并保存。不要只确认界面显示就宣布所有功能可用。
+8. 平台账号由本人扫码。未经明确指示，不发布、点赞、评论、私信或批量采集。媒体生成若缺单独供应商配置，记录具体缺项，不伪装成功。
+9. 给我桌面入口、安装路径、已通过的检查和未通过事项。错误仅提供脱敏信息，不贴 .env、activation.json、Cookie、完整日志。
+
+重装前保护作品、账号、历史和配置；不删除数据来掩盖错误。默认只监听本机，不开启公网访问。

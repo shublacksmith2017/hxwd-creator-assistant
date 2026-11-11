@@ -1,0 +1,42 @@
+name: Windows distribution checks
+on:
+  push:
+    branches: [main, 'codex/**']
+  workflow_dispatch:
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Parse Windows PowerShell 5.1 scripts
+        shell: powershell
+        run: |
+          Get-ChildItem distribution/*.ps1,setup.ps1 | ForEach-Object {
+            $e=$null; $t=$null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName,[ref]$t,[ref]$e) | Out-Null
+            if ($e) { $e | ForEach-Object { Write-Error $_ }; exit 1 }
+          }
+      - name: Configuration tests
+        run: python -m unittest discover -s distribution -p test_*.py -v
+      - name: Missing activation must fail safely
+        shell: powershell
+        run: |
+          & powershell -NoProfile -ExecutionPolicy Bypass -File distribution/Install.ps1 -ActivationPath "$env:TEMP/does-not-exist.json" -NoLaunch
+          if ($LASTEXITCODE -eq 0) { throw 'Missing activation accepted' }
+          exit 0
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci && npm run build
+        working-directory: web/frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: web/frontend/dist

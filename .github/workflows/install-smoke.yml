@@ -1,0 +1,33 @@
+name: Windows full install smoke
+on: workflow_dispatch
+jobs:
+  install:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install FFmpeg
+        shell: powershell
+        run: choco install ffmpeg -y --no-progress
+      - name: Real install and model checks
+        shell: powershell
+        env:
+          HXWD_ACTIVATION: ${{ secrets.HXWD_ACTIVATION }}
+        run: |
+          $activationObject = $env:HXWD_ACTIVATION | ConvertFrom-Json
+          Write-Output ("::add-mask::" + $activationObject.apiKey)
+          $env:Path += ';C:\ProgramData\chocolatey\bin'
+          [IO.File]::WriteAllText("$env:RUNNER_TEMP/activation.json",$env:HXWD_ACTIVATION)
+          Remove-Item Env:HXWD_ACTIVATION
+          & powershell -NoProfile -ExecutionPolicy Bypass -File distribution/Install.ps1 -ActivationPath "$env:RUNNER_TEMP/activation.json" -NoLaunch
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Remove temporary activation
+        if: always()
+        shell: powershell
+        run: Remove-Item "$env:RUNNER_TEMP/activation.json" -ErrorAction SilentlyContinue

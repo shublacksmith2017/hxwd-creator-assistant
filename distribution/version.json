@@ -1,0 +1,9 @@
+{
+  "product": "华新创作助手",
+  "id": "hxwd-creator-assistant",
+  "version": "0.3.0.01",
+  "upstreamCommit": "52806b36f5785e8f585c86ff8cf3021ac8dad34b",
+  "openclaw": "2026.11.3",
+  "model": "claude-haiku-5-5",
+  "baseUrl": "https://api.apilio.ai/v1"
+}
