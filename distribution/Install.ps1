@@ -40,6 +40,7 @@ try {
     $shortcut.TargetPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
     $shortcut.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "' + (Join-Path $AppDir 'distribution\Start.ps1') + '"'
     $shortcut.WorkingDirectory = $AppDir
+    $shortcut.IconLocation = Join-Path $AppDir 'web\static\hxwd-icon.ico'
     $shortcut.Save()
     Write-Host '华新创作助手安装及诊断通过。桌面快捷方式已创建。' -ForegroundColor Green
     if (-not $NoLaunch) { & (Join-Path $AppDir 'distribution\Start.ps1') }

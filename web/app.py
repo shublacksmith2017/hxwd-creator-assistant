@@ -1730,8 +1730,8 @@ def _model_channels(runtime: str | None = None) -> dict:
         })
     elif ob or ok_key:
         chat_rows.append({
-            "slot": "openai", "order": 1, "name": "deepseek",
-            "sub": "官方直连",
+            "slot": "openai", "order": 1, "name": "Apilio" if "apilio.ai" in ob else "openai",
+            "sub": "华新默认模型" if "apilio.ai" in ob else "OpenAI 兼容接口",
             "type": "openai", "model": om or "deepseek-chat",
             "baseUrl": ob, "keyMasked": _mask_key(env.get("OPENAI_API_KEY", "") if ok_key else ""),
             "role": "主" if primary.startswith("openai/") else "备",

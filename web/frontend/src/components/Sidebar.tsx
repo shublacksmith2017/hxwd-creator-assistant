@@ -148,6 +148,7 @@ export default function Sidebar({
         )}
       </div>
 
+      <a href="./static/hxwd-about.html" target="_blank" rel="noreferrer" style={{padding:"8px 16px",fontSize:12,color:"inherit",opacity:.65}}>华新创作助手 v0.3.0.01 · 关于</a>
       <div className="sidebar-status">
         <span className={`status-dot ${gatewayStatus === 'connected' ? '' : 'offline'}`} />
         <span className="sidebar-status-text">{gatewayStatus === 'connected'
