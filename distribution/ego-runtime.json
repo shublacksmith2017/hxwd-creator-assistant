@@ -3,5 +3,8 @@
   "downloadPage": "https://lite.ego.app/download",
   "windowsX64Installer": "https://cdn.ego.app/setup/windows/x64/egoliteSetup.exe",
   "discoveredOn": "2026-11-12",
-  "requiresFirstRunOnboarding": true
+  "requiresFirstRunOnboarding": true,
+  "repository": "https://github.com/citrolabs/ego-lite",
+  "skillVersion": "2.2.0",
+  "skillCommit": "bacaece43900e8ca68eea3b6f1663835ea38df9e"
 }

@@ -14,6 +14,8 @@
 
 ## EgoLite 集成
 
+官方来源：[citrolabs/ego-lite](https://github.com/citrolabs/ego-lite)。本仓库已内置官方 `ego-browser` Skill v2.2.0（MIT，原文及许可保留），Release ZIP SHA-256 与 GitHub 官方摘要一致。该版本号对应 Skill，不是 Windows 浏览器本体；浏览器运行时接口由 `ego-browser skill` 提供。
+
 - 已安装且 CLI 检查正常时直接复用；不复制或覆盖个人浏览器资料。
 - 未安装时从官方 `cdn.ego.app` 下载 Windows x64 安装包，验证 Windows 数字签名，再显示安装界面。安装文件不提交 GitHub，安装结束清理下载缓存。
 - 首次引导由本人在 EgoLite 完成，安装器刷新 PATH 后检查 `ego-browser`。失败会明确停止，可重跑安装；不会切换到 Chromium、Chrome 或系统默认浏览器。

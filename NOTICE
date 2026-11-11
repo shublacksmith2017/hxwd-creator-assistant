@@ -1,3 +1,7 @@
 华新创作助手 is a modified distribution of Easel (ZJU-REAL/Easel), licensed under Apache-2.0.
 Upstream copyright and license retained in LICENSE and README.upstream.md.
 Modifications 2026: Huaxin branding, Windows distribution, Apilio preset, loopback-only listener.
+
+EgoLite Agent Skill: citrolabs/ego-lite, v2.2.0, commit bacaece43900e8ca68eea3b6f1663835ea38df9e.
+Bundled under skills/builtin/ego-browser with its MIT LICENSE preserved.
+EgoLite desktop browser is a separate downloaded product, not part of this source distribution.

@@ -12,3 +12,7 @@
 
 - EgoLite 集成：官方 Windows 下载入口已确认；Windows 安装向导新增复用、签名校验、本人初始化、CLI 检查，启动器改用 EgoLite。缺失初始化不算通过，平台脚本适配仍待完成。
 - Windows 第二轮完整安装：依赖和实际模型调用通过；Agent 原生入口解析失败（npm 全局目录与 Node 不同目录），已增加修复及回归，待 Windows 重跑。
+
+- EgoLite 官方仓库已接入：内置 v2.2.0 的 24 个 Skill 文件及 MIT 许可证，Release 包 SHA-256 与官方摘要一致；实际复制到隔离 Agent workspace 后逐文件校验通过。
+- Windows 官方安装包在 GitHub Windows runner 上实际下载，Authenticode 状态为 Valid：[运行记录](https://github.com/shublacksmith2017/hxwd-creator-assistant/actions/runs/43079080425)。此检查未执行安装器或本人引导。
+- Ego 安装分支及前端检查通过：[运行记录](https://github.com/shublacksmith2017/hxwd-creator-assistant/actions/runs/43078763771)。本地相关回归 37 passed、2 skipped。
