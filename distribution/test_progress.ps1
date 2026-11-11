@@ -1,4 +1,5 @@
 $ErrorActionPreference='Stop'
+function Ok($message) { Write-Host $message }
 $tokens=$null;$errors=$null
 $ast=[System.Management.Automation.Language.Parser]::ParseFile((Join-Path (Split-Path $PSScriptRoot -Parent) 'setup.ps1'),[ref]$tokens,[ref]$errors)
 $fn=$ast.Find({param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Invoke-WithProgress'},$true)
