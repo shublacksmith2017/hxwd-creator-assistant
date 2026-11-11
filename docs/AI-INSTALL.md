@@ -5,6 +5,9 @@
 仓库：https://github.com/shublacksmith2017/hxwd-creator-assistant
 安装包：https://github.com/shublacksmith2017/hxwd-creator-assistant/releases/latest
 
+EgoLite 官方来源：https://github.com/citrolabs/ego-lite
+华新包已附带官方 ego-browser Skill；无需同事重复配置 Skill。浏览器本体由安装向导从官方 CDN 获取。
+
 执行要求：
 1. 确认 Windows 版本、x64 架构、可用磁盘空间和联网条件。不要修改已有 CRM、其他 Agent 或浏览器配置。仓库若提示无权访问，请让管理员授予访问，不尝试绕过。
 2. 下载最新华新 Windows Release ZIP 和 SHA256SUMS.txt，校验 SHA-256 后解压到用户本地目录。不要运行源码中上游的 setup.ps1 代替华新安装入口。

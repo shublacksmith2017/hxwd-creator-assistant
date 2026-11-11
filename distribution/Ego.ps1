@@ -17,8 +17,9 @@ function Test-HuaxinEgo {
 }
 
 function Install-HuaxinEgo([switch]$NonInteractive) {
+    if (-not [Environment]::Is64BitOperatingSystem -or $env:PROCESSOR_ARCHITECTURE -eq 'ARM64' -or $env:PROCESSOR_ARCHITEW6432 -eq 'ARM64') { throw '当前安装包针对 Windows x64；此系统架构尚未验收。' }
     if (Test-HuaxinEgo) { Write-Host 'EgoLite 已就绪，复用现有安装。'; return }
-    $registered = @(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match '(?i)ego\s*lite' })
+    $registered = @(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match '(?i)ego[\s_-]*(?:\(\s*)?lite' })
     if (Get-Command ego-browser -ErrorAction SilentlyContinue) {
         throw '已找到 ego-browser，但运行检查失败。请打开 EgoLite 检查初始化或连接状态，再重跑安装；不会覆盖或切换浏览器。'
     }
@@ -32,7 +33,7 @@ function Install-HuaxinEgo([switch]$NonInteractive) {
         $installer = Join-Path $cache 'egoliteSetup.exe'
         Write-Host '正在下载 EgoLite 官方 Windows 安装包...'
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest $uri.AbsoluteUri -OutFile $installer -UseBasicParsing
+        Invoke-WebRequest $uri.AbsoluteUri -OutFile $installer -UseBasicParsing -TimeoutSec 300
         $signature = Get-AuthenticodeSignature $installer
         if ($signature.Status -ne 'Valid') {
             Remove-Item $installer -Force
