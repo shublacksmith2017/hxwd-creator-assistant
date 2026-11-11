@@ -53,7 +53,7 @@ function Install-HuaxinEgo([switch]$NonInteractive) {
 function Open-HuaxinEgo {
     if (-not (Test-HuaxinEgo)) { throw 'EgoLite 未就绪，请先打开应用完成初始化，或重跑安装.cmd。' }
     # No shell interpolation inside JavaScript. Only the loopback product URL is opened.
-    $script = "const t=await taskSpace('Huaxin Creator Assistant');await t.page('p1').goto('http://127.0.0.1:17860');await t.handOff();"
+    $script = "const t=await taskSpace('Huaxin Creator Assistant '+Date.now());await t.page('p1').goto('http://127.0.0.1:17860');await t.handOff();"
     & ego-browser nodejs -e $script
     if ($LASTEXITCODE -ne 0) { throw '无法在 EgoLite 打开工作台，请查看上方错误；不会改用其他浏览器。' }
 }
