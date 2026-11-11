@@ -5,5 +5,7 @@
   "upstreamCommit": "52806b36f5785e8f585c86ff8cf3021ac8dad34b",
   "openclaw": "2026.11.3",
   "model": "claude-haiku-5-5",
-  "baseUrl": "https://api.apilio.ai/v1"
+  "baseUrl": "https://api.apilio.ai/v1",
+  "imageModel": "gpt-image-2-all",
+  "scope": "图文优先；不配置配音、语音转写、视频和音乐"
 }

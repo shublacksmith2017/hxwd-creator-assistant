@@ -22,9 +22,9 @@ try {
     $envFile = Join-Path $AppDir '.env'
     if (Test-Path $envFile) { Copy-Item $envFile ($envFile + '.before-hxwd') -Force }
     $keep = @()
-    if (Test-Path $envFile) { $keep = @(Get-Content $envFile -Encoding UTF8 | Where-Object { $_ -notmatch '^(OPENAI_API_KEY|OPENAI_BASE_URL|OPENAI_MODEL|CLAUDE_MODEL|EASEL_CHAT_TRANSPORT)\s*=' }) }
+    if (Test-Path $envFile) { $keep = @(Get-Content $envFile -Encoding UTF8 | Where-Object { $_ -notmatch '^(OPENAI_API_KEY|OPENAI_BASE_URL|OPENAI_MODEL|CLAUDE_MODEL|EASEL_CHAT_TRANSPORT|IMG_API_KEY|IMG_BASE_URL|IMG_MODEL)\s*=' }) }
     if ($keep.Count -eq 0) { $keep = @('EASEL_PUBLISH_MODE=automated') }
-    $keep += @('OPENAI_BASE_URL=https://api.apilio.ai/v1','OPENAI_MODEL=claude-haiku-5-5','CLAUDE_MODEL=openai/claude-haiku-5-5','EASEL_CHAT_TRANSPORT=http',('OPENAI_API_KEY=' + $activation.apiKey))
+    $keep += @('OPENAI_BASE_URL=https://api.apilio.ai/v1','OPENAI_MODEL=claude-haiku-5-5','CLAUDE_MODEL=openai/claude-haiku-5-5','EASEL_CHAT_TRANSPORT=http',('OPENAI_API_KEY=' + $activation.apiKey),'IMG_BASE_URL=https://api.apilio.ai/v1','IMG_MODEL=gpt-image-2-all',('IMG_API_KEY=' + $activation.apiKey))
     [IO.File]::WriteAllLines($envFile, $keep, (New-Object Text.UTF8Encoding($false)))
     $who = [Security.Principal.WindowsIdentity]::GetCurrent().Name
     & icacls $envFile /inheritance:r /grant:r "${who}:(F)" 'SYSTEM:(F)' | Out-Null
