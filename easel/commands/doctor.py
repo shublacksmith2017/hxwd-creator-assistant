@@ -635,8 +635,12 @@ def cmd_doctor(_args) -> int:
     frontend_ready = (PROJECT_ROOT / "web" / "frontend" / "dist" / "index.html").is_file()
     all_ok &= _check("Web frontend build", frontend_ready,
                       "运行 cd web/frontend && npm ci && npm run build")
-    all_ok &= _check("Playwright Chromium", _chromium_available(),
-                      "运行 python3 -m playwright install chromium")
+    if settings.get("EASEL_BROWSER_PROVIDER") == "egolite":
+        all_ok &= _check("EgoLite CLI", bool(shutil.which("ego-browser")),
+                          "打开 EgoLite 完成首次初始化，然后重新打开终端")
+    else:
+        all_ok &= _check("Playwright Chromium", _chromium_available(),
+                          "运行 python3 -m playwright install chromium")
 
     if direct and not alternate:
         try:

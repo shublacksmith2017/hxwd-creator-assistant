@@ -1,0 +1,7 @@
+{
+  "provider": "egolite",
+  "downloadPage": "https://lite.ego.app/download",
+  "windowsX64Installer": "https://cdn.ego.app/setup/windows/x64/egoliteSetup.exe",
+  "discoveredOn": "2026-11-12",
+  "requiresFirstRunOnboarding": true
+}

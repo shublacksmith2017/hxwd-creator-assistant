@@ -1,4 +1,4 @@
-name: Windows full install smoke
+name: Windows core install smoke
 on: workflow_dispatch
 jobs:
   install:
@@ -15,7 +15,7 @@ jobs:
       - name: Install FFmpeg
         shell: powershell
         run: choco install ffmpeg -y --no-progress
-      - name: Real install and model checks
+      - name: Real core install and model checks (Ego onboarding excluded)
         shell: powershell
         env:
           HXWD_ACTIVATION: ${{ secrets.HXWD_ACTIVATION }}
@@ -25,8 +25,16 @@ jobs:
           $env:Path += ';C:\ProgramData\chocolatey\bin'
           [IO.File]::WriteAllText("$env:RUNNER_TEMP/activation.json",$env:HXWD_ACTIVATION)
           Remove-Item Env:HXWD_ACTIVATION
-          & powershell -NoProfile -ExecutionPolicy Bypass -File distribution/Install.ps1 -ActivationPath "$env:RUNNER_TEMP/activation.json" -NoLaunch
+          python distribution/configure.py . "$env:RUNNER_TEMP/activation.json"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:EASEL_BROWSER_PROVIDER = 'egolite'
+          & powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -OpenClaw -NonInteractive
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .venv/Scripts/python.exe distribution/verify_runtime.py --model-only
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .venv/Scripts/python.exe -m easel ping
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Write-Host 'Core only: EgoLite GUI onboarding and platform actions are NOT validated by CI.' 
       - name: Gateway health summary
         if: always()
         shell: powershell

@@ -85,6 +85,21 @@ def test_bat_shim_also_recognized(tmp_path, monkeypatch):
     assert cmd == [str(node_exe), str(mjs)]
 
 
+@pytest.mark.parametrize("extension", ["cmd", "ps1"])
+def test_custom_npm_prefix_uses_path_node(tmp_path, monkeypatch, extension):
+    shim, colocated, mjs = _fake_npm_global_layout(tmp_path)
+    colocated.unlink()
+    shim = shim.with_suffix('.' + extension)
+    shim.write_text('shim', encoding='utf-8')
+    node = tmp_path / 'separate-node' / 'node.exe'
+    node.parent.mkdir()
+    node.touch()
+    monkeypatch.setattr(oc.shutil, 'which', lambda name: {
+        'node': str(node), 'openclaw': str(shim),
+    }.get(name))
+    assert oc.openclaw_base_cmd() == [str(node), str(mjs)]
+
+
 def test_non_shim_openclaw_on_path_unaffected(tmp_path, monkeypatch):
     """常规 Unix 场景（openclaw 是真可执行文件，非 .cmd/.bat）：新分支不介入，行为不变。"""
     real = tmp_path / "bin" / "openclaw"

@@ -65,12 +65,16 @@ def openclaw_base_cmd() -> list[str]:
     #      这里解析出 shim 同目录的真实 node + .mjs，完全绕开 cmd.exe。
     if oc:
         shim = Path(oc).resolve()
-        if shim.suffix.lower() in (".cmd", ".bat"):
+        if shim.suffix.lower() in (".cmd", ".bat", ".ps1"):
             shim_dir = shim.parent
             mjs = shim_dir / "node_modules" / "openclaw" / "openclaw.mjs"
             node_exe = shim_dir / "node.exe"
             if mjs.is_file() and node_exe.is_file():
                 return [str(node_exe), str(mjs)]
+            # Windows global npm prefix often differs from Node's install dir
+            # (e.g. GitHub runner C:\npm\prefix versus hostedtoolcache Node).
+            if mjs.is_file() and node:
+                return [node, str(mjs)]
 
     # 2) Hunt for openclaw.mjs under the known npm global layouts.
     if node:

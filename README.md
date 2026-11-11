@@ -6,11 +6,19 @@
 
 1. 打开 [Releases](https://github.com/shublacksmith2017/hxwd-creator-assistant/releases)，下载 `HXWD-Creator-Assistant-Windows-0.3.0.01.zip`。
 2. 解压到普通本地目录，不要在 ZIP 内直接双击。向舒老师领取内部 `activation.json`，放在 `安装.cmd` 同目录。内部完整包已包含该文件时不需再放。
-3. 双击 `安装.cmd`，允许必要的系统软件安装。首次需要联网，自动安装 Python、Node、Git、FFmpeg、Agent 和 Chromium 并构建前端。
+3. 双击 `安装.cmd`，允许必要的系统软件安装。首次需要联网，自动安装 Python、Node、Git、FFmpeg、Agent 并构建前端；检测 EgoLite，缺失时下载官方 Windows 安装包并启动安装。首次需本人在 EgoLite 完成引导，随后安装器继续检查。
 4. 安装通过后，从桌面「华新创作助手」启动，地址 `http://127.0.0.1:17860`。
-5. 在账号页面本人扫码登录平台。不需要填写 API 地址和模型，不需要把密码、Key 或登录状态发送给 AI。
+5. 浏览器使用 EgoLite，首次初始化需本人完成；平台脚本的 Ego 适配验收状态见下方说明。不需要填写 API 地址和模型，不需要把密码、Key 或登录状态发送给 AI。
 
-这是联网安装包，尚不是离线 EXE。支持目标为 Windows 10/11 x64；旧系统需可用的 winget（Microsoft App Installer）。GitHub、npm、PyPI、Chromium 下载须可达。遇到网络失败修复网络后重跑，不要跳过缺失功能。
+这是联网安装包，尚不是离线 EXE。支持目标为 Windows 10/11 x64；旧系统需可用的 winget（Microsoft App Installer）。GitHub、npm、PyPI、EgoLite 官方下载须可达。遇到网络失败修复网络后重跑，不要跳过缺失功能。
+
+## EgoLite 集成
+
+- 已安装且 CLI 检查正常时直接复用；不复制或覆盖个人浏览器资料。
+- 未安装时从官方 `cdn.ego.app` 下载 Windows x64 安装包，验证 Windows 数字签名，再显示安装界面。安装文件不提交 GitHub，安装结束清理下载缓存。
+- 首次引导由本人在 EgoLite 完成，安装器刷新 PATH 后检查 `ego-browser`。失败会明确停止，可重跑安装；不会切换到 Chromium、Chrome 或系统默认浏览器。
+- 桌面入口通过 EgoLite 打开本机工作台。自动安装加 `-NonInteractive` 时，缺少 Ego 初始化将报错，不会无限等待本人操作。
+- **当前平台适配尚未验收完成**：原版平台登录、采集、发布脚本依赖 Playwright，不能把“安装了 EgoLite”视为这些脚本已改造完毕。本发行版暂未发布正式 Release，需继续完成平台适配和 Windows 本人首次安装验收。
 
 ## 给同事的 AI
 
@@ -33,7 +41,7 @@ GitHub 源码和 Release 均不含真实 API Key。内部激活文件独立交�
 
 ## 故障与更新
 
-运行 `诊断.cmd`：检查依赖、Chromium、本机 Agent 和模型真实调用。只有检查通过才创建桌面快捷方式并显示安装完成。
+运行 `诊断.cmd`：检查依赖、EgoLite、本机 Agent 和模型真实调用。只有检查通过才创建桌面快捷方式并显示安装完成。
 
 升级前备份本机 `.env`、data、outputs、profiles 和 `.openclaw-easel`。安装器保留本机数据目录；当前版本不提供无人值守自动更新或数据库迁移。退出旧程序后再手动安装，失败恢复备份，不删除用户资料。
 

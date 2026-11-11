@@ -386,12 +386,13 @@ try {
     & npm run build
     if ($LASTEXITCODE -ne 0) { Fail 'Web 前端构建失败。' }
 } finally { Pop-Location }
-Step '5/8' '安装 Playwright Chromium' '浏览器登录与发布'
-Info '安装 Playwright Chromium...'
-# 降级而非中断：这是个 ~300MB 的下载，弱网下失败很常见，且只影响浏览器登录/发布。
-if (-not (Invoke-WithProgress 'Playwright Chromium' $Python @('-m','playwright','install','chromium'))) {
-    Add-Warning 'Playwright Chromium' '下载失败，浏览器登录/发布不可用' `
-        "$Python -m playwright install chromium"
+if ($env:EASEL_BROWSER_PROVIDER -eq 'egolite') {
+    Step '5/8' '使用 EgoLite' '华新安装向导负责检查和初始化；不安装备用浏览器'
+} else {
+    Step '5/8' '安装 Playwright Chromium' '上游兼容入口'
+    if (-not (Invoke-WithProgress 'Playwright Chromium' $Python @('-m','playwright','install','chromium'))) {
+        Add-Warning 'Playwright Chromium' '下载失败' "$Python -m playwright install chromium"
+    }
 }
 
 $envPath = Join-Path $Root '.env'

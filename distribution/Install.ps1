@@ -1,8 +1,9 @@
-﻿param([string]$ActivationPath = '', [switch]$NoLaunch)
+﻿param([string]$ActivationPath = '', [switch]$NoLaunch, [switch]$NonInteractive)
 $ErrorActionPreference = 'Stop'
 $Source = Split-Path $PSScriptRoot -Parent
 $HomeDir = Join-Path $env:LOCALAPPDATA 'HuaxinCreatorAssistant'
 $AppDir = Join-Path $HomeDir 'app'
+. (Join-Path $PSScriptRoot 'Ego.ps1')
 try {
     if (-not $ActivationPath) { $ActivationPath = Join-Path $Source 'activation.json' }
     if (-not (Test-Path $ActivationPath)) { throw '缺少内部激活文件 activation.json。请向舒老师领取，放在安装.cmd 同目录；不要把 API Key 发给 AI 或上传 GitHub。' }
@@ -10,6 +11,7 @@ try {
     $activation = Get-Content $ActivationPath -Raw -Encoding UTF8 | ConvertFrom-Json
     if ($activation.baseUrl -ne 'https://api.apilio.ai/v1' -or $activation.model -ne 'claude-haiku-5-5' -or $activation.apiKey.Length -lt 16 -or $activation.apiKey -match '\s') { throw '内部激活文件无效。' }
     if ((Test-Path (Join-Path $env:USERPROFILE '.openclaw-easel')) -and -not (Test-Path (Join-Path $HomeDir 'installed.json'))) { throw '发现已有 Easel Agent 配置。为保护旧工具，停止安装；请管理员先迁移或备份，不能覆盖。' }
+    Install-HuaxinEgo -NonInteractive:$NonInteractive
     New-Item $AppDir -ItemType Directory -Force | Out-Null
     if ($Source -ne $AppDir) {
         & robocopy $Source $AppDir /E /NFL /NDL /NJH /NJS /XD .git .github .venv node_modules data outputs profiles /XF .env activation.json | Out-Null
@@ -22,15 +24,16 @@ try {
     $envFile = Join-Path $AppDir '.env'
     if (Test-Path $envFile) { Copy-Item $envFile ($envFile + '.before-hxwd') -Force }
     $keep = @()
-    if (Test-Path $envFile) { $keep = @(Get-Content $envFile -Encoding UTF8 | Where-Object { $_ -notmatch '^(OPENAI_API_KEY|OPENAI_BASE_URL|OPENAI_MODEL|CLAUDE_MODEL|EASEL_CHAT_TRANSPORT|IMG_API_KEY|IMG_BASE_URL|IMG_MODEL)\s*=' }) }
+    if (Test-Path $envFile) { $keep = @(Get-Content $envFile -Encoding UTF8 | Where-Object { $_ -notmatch '^(OPENAI_API_KEY|OPENAI_BASE_URL|OPENAI_MODEL|CLAUDE_MODEL|EASEL_CHAT_TRANSPORT|IMG_API_KEY|IMG_BASE_URL|IMG_MODEL|EASEL_BROWSER_PROVIDER)\s*=' }) }
     if ($keep.Count -eq 0) { $keep = @('EASEL_PUBLISH_MODE=automated') }
-    $keep += @('OPENAI_BASE_URL=https://api.apilio.ai/v1','OPENAI_MODEL=claude-haiku-5-5','CLAUDE_MODEL=openai/claude-haiku-5-5','EASEL_CHAT_TRANSPORT=http',('OPENAI_API_KEY=' + $activation.apiKey),'IMG_BASE_URL=https://api.apilio.ai/v1','IMG_MODEL=gpt-image-2-all',('IMG_API_KEY=' + $activation.apiKey))
+    $keep += @('OPENAI_BASE_URL=https://api.apilio.ai/v1','OPENAI_MODEL=claude-haiku-5-5','CLAUDE_MODEL=openai/claude-haiku-5-5','EASEL_CHAT_TRANSPORT=http','EASEL_BROWSER_PROVIDER=egolite',('OPENAI_API_KEY=' + $activation.apiKey),'IMG_BASE_URL=https://api.apilio.ai/v1','IMG_MODEL=gpt-image-2-all',('IMG_API_KEY=' + $activation.apiKey))
     [IO.File]::WriteAllLines($envFile, $keep, (New-Object Text.UTF8Encoding($false)))
     $who = [Security.Principal.WindowsIdentity]::GetCurrent().Name
     & icacls $envFile /inheritance:r /grant:r "${who}:(F)" 'SYSTEM:(F)' | Out-Null
     if ($LASTEXITCODE -ne 0) { throw '无法保护本机调用配置的权限。' }
     # Set marker before upstream initialization, enabling a failed install to be retried.
     Copy-Item (Join-Path $AppDir 'distribution\version.json') (Join-Path $HomeDir 'installed.json') -Force
+    $env:EASEL_BROWSER_PROVIDER = 'egolite'
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $AppDir 'setup.ps1') -OpenClaw -NonInteractive
     if ($LASTEXITCODE -ne 0) { throw '运行环境安装失败；可修复网络后重跑本安装器。' }
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $AppDir 'distribution\Diagnose.ps1')

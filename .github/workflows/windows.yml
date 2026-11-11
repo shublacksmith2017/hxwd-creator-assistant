@@ -22,6 +22,9 @@ jobs:
       - name: Native exit code regression
         shell: powershell
         run: ./distribution/test_progress.ps1
+      - name: Ego bootstrap regression
+        shell: powershell
+        run: ./distribution/test_ego.ps1
       - name: Configuration tests
         run: python -m unittest discover -s distribution -p test_*.py -v
       - name: Missing activation must fail safely
